@@ -31,6 +31,9 @@ class IndexController extends AbstractActionController
     public function __construct()
     {
         $this->session = new Container('github');
+        $reader = new \Zend\Config\Reader\Ini();
+        $config = $reader->fromFile(CONFIG_PATH . self::GITHUB_INI);
+        $this->github = new Github($config['clientId'], $config['clientSecret']);
     }
 
     /**
@@ -46,9 +49,6 @@ class IndexController extends AbstractActionController
             $this->redirect()->toUrl($this->github->authorize());
         }
         
-        $reader = new \Zend\Config\Reader\Ini();
-        $data = $reader->fromFile(CONFIG_PATH . self::GITHUB_INI);
-        $this->github = new Github($data['clientId'], $data['clientSecret']);
         return parent::onDispatch($e);
     }
 
