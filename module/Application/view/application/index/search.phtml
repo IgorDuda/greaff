@@ -1,0 +1,95 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Search GitHub users</h1>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <?php
+    $form = $this->form;
+    $form->prepare();
+    ?>
+    <?= $this->form()->openTag($form);?>
+    <div class="input-group custom-search-form">
+        <?=$this->formRow($form->get('query'));?>
+        <span class="input-group-btn">
+            <?=$this->formRow($form->get('submit'));?>
+        </span>
+    </div>
+    <?=$this->form()->closeTag();?>
+</div>
+
+<?php if(isset($this->users)):?>
+
+    <?php if ($this->users->total_count) : ?>
+        <div class="col-lg-12">
+            <h3>Found <?= $users->total_count; ?> users</h3>
+        </div>
+
+        <?php foreach ($users->items as $user): ?>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-user fa-fw"></i> <?= $user->login; ?>
+                        </div>
+                        <div class="panel-body center">
+                            <div class="panel" style="text-align: center">
+                                <img width="140" class="img-circle" src="<?= $user->avatar_url; ?>" alt="<?= $user->login; ?>" />
+                            </div>
+                            <a href="<?= $user->html_url; ?>" target="blank" class="btn btn-default btn-block">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bell fa-fw"></i> GitHub User Panel
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="list-group">
+                                <a href="#" class="list-group-item">
+                                    <i class="fa fa-comment fa-fw"></i> ID:
+                                    <span class="pull-right text-muted small"><em><?= $user->id; ?></em>
+                                    </span>
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <i class="fa fa-twitter fa-fw"></i> Login:
+                                    <span class="pull-right text-muted small"><em><?= $user->login; ?></em>
+                                    </span>
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <i class="fa fa-envelope fa-fw"></i> Github url:
+                                    <span class="pull-right text-muted">
+                                        <?= $user->html_url; ?>
+                                    </span>
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <i class="fa fa-upload fa-fw"></i> Score:
+                                    <span class="pull-right text-muted small"><em><?= $user->score; ?></em>
+                                    </span>
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <i class="fa fa-bolt fa-fw"></i> Type:
+                                    <span class="pull-right text-muted small"><em><?= $user->type; ?></em>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+
+    <?php else: ?>
+
+        <?php if($this->query):?>
+        <div class="col-lg-12">
+            <h3>No results found for query <?= $this->query; ?></h3>
+        </div>
+        <?php endif;?>
+
+    <?php endif; ?>
+<?php endif; ?>

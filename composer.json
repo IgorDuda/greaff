@@ -15,11 +15,29 @@
         "php": "^5.6 || ^7.0",
         "zendframework/zend-component-installer": "^1.0 || ^0.7 || ^1.0.0-dev@dev",
         "zendframework/zend-mvc": "^3.0.1",
-        "zfcampus/zf-development-mode": "^3.0"
+        "zendframework/zend-form": "*",
+        "zfcampus/zf-development-mode": "^3.0",
+        "zendframework/zend-cache": "^2.6.1",
+        "zendframework/zend-captcha": "^2.7.1",
+        "zendframework/zend-code": "^2.6 || ^3.0",
+        "zendframework/zend-escaper": "^2.5",
+        "zendframework/zend-eventmanager": "^2.6.2 || ^3.0",
+        "zendframework/zend-filter": "^2.6",
+        "zendframework/zend-i18n": "^2.6",
+        "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3",
+        "zendframework/zend-session": "^2.8.1",
+        "zendframework/zend-text": "^2.6",
+        "zendframework/zend-validator": "^2.6",
+        "zendframework/zend-view": "^2.6.2",
+        "zendframework/zendservice-recaptcha": "^3.0.0",
+        "zendframework/zend-paginator": "*"
+        
     },
+    
     "autoload": {
         "psr-4": {
-            "Application\\": "module/Application/src/"
+            "Application\\": "module/Application/src/",
+            "Frontend\\": "module/Frontend/src/"
         }
     },
     "autoload-dev": {
