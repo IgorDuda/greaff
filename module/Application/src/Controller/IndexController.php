@@ -15,54 +15,74 @@ use Application\Form\SearchForm;
 
 class IndexController extends AbstractActionController
 {
+    /**
+     * @var Application\Models\Github\Github
+     */
     private $github;
+    
+    /**
+     * @var Zend\Session\Container 
+     */
     private $session;
-
-    public function onDispatch(MvcEvent $e)
-    {
-        return parent::onDispatch($e);
-    }
+    
+    const SESSION_KEY = 'access_token';
+    const GITHUB_INI = 'github.ini';
 
     public function __construct()
     {
-        $reader = new \Zend\Config\Reader\Ini();
-        $data = $reader->fromFile(ROOT_PATH.'/config/github.ini');
-        $this->github = new Github($data['clientId'], $data['clientSecret']);
         $this->session = new Container('github');
     }
 
-    public function indexAction()
+    /**
+     * Execute the request
+     *
+     * @param  MvcEvent $e
+     * @return mixed
+     * @throws Exception\DomainException
+     */
+    public function onDispatch(MvcEvent $e)
     {
-        if ($this->isTokenExists()) {
-            $this->redirect()->toRoute('application', array('action' => 'user'));
-        } else {
+        if(!$this->isTokenExists()) {
             $this->redirect()->toUrl($this->github->authorize());
         }
+        
+        $reader = new \Zend\Config\Reader\Ini();
+        $data = $reader->fromFile(CONFIG_PATH . self::GITHUB_INI);
+        $this->github = new Github($data['clientId'], $data['clientSecret']);
+        return parent::onDispatch($e);
     }
 
+    /**
+     * Displays github information about authorized user
+     * 
+     * @return ViewModel
+     */
+    public function indexAction()
+    {
+        $user = $this->github->me($this->getToken());
+        return new ViewModel(array('user' => $user));
+    }
+
+    /**
+     * Authorization callback URL
+     */
     public function callbackAction()
     {
         try {
             $request = $this->params()->fromQuery();
-            
-            $this->saveToken(
-                    $this->github
-                        ->setCode($request['code'])
-                        ->createAccessToken()
-                );
 
-            $this->redirect()->toRoute('application', array('action' => 'user'));
+            $this->saveToken(
+                $this->github
+                    ->setCode($request['code'])
+                    ->createAccessToken()
+            );
+
+            $this->redirect()->toRoute('application', array('action' => 'index'));
         } catch (\Exception $x) {
             echo '<pre>';
             printf('%s:%s\n\n%s', get_class($x), $x->getMessage(), $x->getTraceAsString());
             die;
         }
-    }
-
-    public function userAction()
-    {
-        $user = $this->github->me($this->getToken());
-        return new ViewModel(array('user' => $user));
     }
 
     /**
@@ -94,23 +114,41 @@ class IndexController extends AbstractActionController
         ));
     }
 
+    /**
+     * Set access token into session
+     * 
+     * @param string $accessToken
+     */
     private function saveToken($accessToken)
     {
-        $this->session->offsetSet('access_token', $accessToken);
+        $this->session->offsetSet(self::SESSION_KEY, $accessToken);
     }
 
+    /**
+     * Get access token from session
+     * 
+     * @param string $accessToken
+     */
     private function getToken()
     {
-        return $this->session->offsetGet('access_token');
+        return $this->session->offsetGet(self::SESSION_KEY);
     }
 
+    /**
+     * Check if access token exists
+     * 
+     * @return boolean
+     */
     private function isTokenExists()
     {
-        return $this->session->offsetExists('access_token') ? true : false;
+        return $this->session->offsetExists(self::SESSION_KEY) ? true : false;
     }
 
+    /**
+     * Delete access token from sesion
+     */
     private function unsetToken()
     {
-        $this->session->offsetUnset('access_token');
+        $this->session->offsetUnset(self::SESSION_KEY);
     }
 }

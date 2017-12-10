@@ -4,6 +4,7 @@ use Zend\Mvc\Application;
 use Zend\Stdlib\ArrayUtils;
 
 define('ROOT_PATH', dirname(__DIR__));
+define('CONFIG_PATH', dirname(__DIR__).'/config/');
 
 /**
  * This makes our life easier when dealing with paths. Everything is relative

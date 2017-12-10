@@ -6,11 +6,31 @@ use Application\Models\Github\Urls;
 
 class Github
 {
+    /**
+     * @var string
+     */
     protected $clientId;
+    
+    /**
+     * @var string
+     */
     protected $clientSecret;
+    
+    /**
+     * @var string
+     */
     protected $code;
+    
+    /**
+     * @var string
+     */
     protected $accessToken;
 
+    /**
+     * @param type $clientId
+     * @param type $clientSecret
+     * @throws \InvalidArgumentException
+     */
     public function __construct($clientId, $clientSecret)
     {
         if(empty($clientId)) {
@@ -68,6 +88,11 @@ class Github
         return $this->accessToken;
     }
 
+    /**
+     * Receiving a access token
+     * 
+     * @return string
+     */
     public function createAccessToken()
     {
         $client = new Client();
@@ -83,11 +108,22 @@ class Github
         return $this->parseCallback($response);
     }
 
+    /**
+     * Formatted authorize url
+     * 
+     * @return string
+     */
     public function authorize()
     {
         return Urls::authorize . "?client_id=" . $this->clientId;
     }
 
+    /**
+     * Displays information about autorized user
+     * 
+     * @param string $acessToken
+     * @return type
+     */
     public function me($acessToken)
     {
         $client = new Client(Urls::current_user);
@@ -97,6 +133,13 @@ class Github
         return json_decode($response);
     }
 
+    /**
+     * Search github user method
+     * 
+     * @todo should be added parameters (per_page, page) for pagination
+     * @param string $query
+     * @return type
+     */
     public function searchUser($query)
     {
         $client = new Client(Urls::user_search);
@@ -108,6 +151,13 @@ class Github
         return json_decode($response);
     }
 
+    /**
+     * Parse response string by access token
+     * 
+     * @param string $string
+     * @return string
+     * @throws \InvalidArgumentException
+     */
     private function parseCallback($string)
     {
         if (strlen($string) > 0) {
